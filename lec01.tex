@@ -1,3 +1,7 @@
+% The code is also hosted at GitHub[1].
+%
+% [1] https://github.com/adityasz/cs217-lec-1
+
 \documentclass[twoside]{article}
     \setlength{\oddsidemargin} {0.25 in}
     \setlength{\evensidemargin}{-0.25 in}
@@ -183,11 +187,11 @@ $\mathbf{x}.$
 \[
     \min_{\mathbf{x} \in [0, 1]^{m \times n}}
     \left(
-    \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
-        \|y_{i, j} - (k * \mathbf{x})_{i, j}\| +
-    \lambda \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
-        ((\mathbf{x}_{i, j} - \mathbf{x}_{i, j + 1})^2
-         + (\mathbf{x}_{i + 1, j} - \mathbf{x}_{i, j})^2)
+        \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
+            \|y_{i, j} - (k * \mathbf{x})_{i, j}\|
+        + \lambda \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
+            ((\mathbf{x}_{i, j} - \mathbf{x}_{i, j + 1})^2
+             + (\mathbf{x}_{i + 1, j} - \mathbf{x}_{i, j})^2)
     \right)
 \] Here, $\lambda$ and $k$ are the hyperparameters, which are determined by
 experiment. The optimal value of $\lambda$ and $k$ depend on the image. For
