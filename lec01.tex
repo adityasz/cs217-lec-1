@@ -14,6 +14,10 @@
 \usepackage{amssymb}
 \usepackage{mathrsfs}   % provides \mathscr
 \usepackage{physics}    % provides \norm
+\usepackage{tikz}
+    \usetikzlibrary{arrows.meta}
+\usepackage{pgfplots}
+    \pgfplotsset{compat=1.18}
 
 %
 % The following commands set up the lecnum (lecture number)
@@ -21,11 +25,11 @@
 % to the lecture number.
 %
 \newcounter{lecnum}
-    \renewcommand{\thepage}{\thelecnum-\arabic{page}}
-    \renewcommand{\thesection}{\thelecnum.\arabic{section}}
-    \renewcommand{\theequation}{\thelecnum.\arabic{equation}}
-    \renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
-    \renewcommand{\thetable}{\thelecnum.\arabic{table}}
+\renewcommand{\thepage}    {\thelecnum-\arabic{page}}
+\renewcommand{\thesection} {\thelecnum.\arabic{section}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\renewcommand{\thefigure}  {\thelecnum.\arabic{figure}}
+\renewcommand{\thetable}   {\thelecnum.\arabic{table}}
 
 %
 % The following macro is used to generate the header.
@@ -126,18 +130,46 @@ $x \in [0, 1] \cup [4, 7].$
 
 Here, the objective function is $f(x) = (x - 2)^2$ and the constraint set is
 $\mathscr{C} = [0, 1] \cup [4, 7].$ This is a one-variable function, and we can
-easily see from the plot in figure REF that $x^* = 1$ is the optimal value of
-$x$.
+easily see from the plot in figure \ref{fig:ex1} that $x^* = 1$ is the optimal
+value of $x$.
 
-% Insert plot of $(x - 2)^2$ to the right, made in TikZ.
+\begin{figure}[b]
+    \centering
+    \begin{tikzpicture}[scale=1, >=latex]
+        \begin{axis} [
+                axis x line = bottom,
+                axis y line = none,
+                xlabel = $x$,
+                xmin   = -5,
+                xmax   = 9,
+                ymin   = 0,
+                ymax   = 64,
+                xtick  = {0, 1, 4, ..., 7},
+                ytick  = {},
+                width  = 60 mm,
+                height = 40 mm,
+                axis line style = {<->, >={Triangle[length=2mm, width=1.5mm]}}
+            ]
+            \addplot [line width = 1 pt]
+                expression[
+                    smooth,
+                    samples = 2000,
+                    domain  = -5:9
+                ] {(x - 2) * (x - 2)};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{A plot of $f(x) = (x - 2)^2.$}
+    \label{fig:ex1}
+\end{figure}
 
 \textbf{Example.} We want to optimally place a warehouse, so that the sum of the
 Euclidean distances between the warehouse and the cities is minimized.
 
 Let the cities be located at $\mathbf{y}_1, \ldots, \mathbf{y}_m$ and the
 warehouse at $\mathbf{x}$. We want to find the following: \[
-    \min_{\mathbf{x} \in \mathscr{C}} \sum_{i = 1}^{m} \|\mathbf{x} - \mathbf{y}_i\|_2,
-\] where $\mathscr{C}$ is the set of all points where we want our Warehouse to
+    \min_{\mathbf{x} \in \mathscr{C}}
+    \sum_{i = 1}^{m} \|\mathbf{x} - \mathbf{y}_i\|_2,
+\] where $\mathscr{C}$ is the set of all points where we want our warehouse to
 be, and $\| \cdot \|_2$ represents the $L^2$ norm, defined by \[
    \|\mathbf{x}\| := \sqrt{x_1^2 + x_2^2},
 \] where $\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}$.
@@ -151,8 +183,11 @@ $\mathbf{x}.$
 \[
     \min_{\mathbf{x} \in [0, 1]^{m \times n}}
     \left(
-    \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1} \|y_{i, j} - (k * \mathbf{x})_{i, j}\| +
-    \lambda \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1} ((\mathbf{x}_{i, j} - \mathbf{x}_{i, j + 1})^2 + (\mathbf{x}_{i + 1, j} - \mathbf{x}_{i, j})^2)
+    \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
+        \|y_{i, j} - (k * \mathbf{x})_{i, j}\| +
+    \lambda \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
+        ((\mathbf{x}_{i, j} - \mathbf{x}_{i, j + 1})^2
+         + (\mathbf{x}_{i + 1, j} - \mathbf{x}_{i, j})^2)
     \right)
 \] Here, $\lambda$ and $k$ are the hyperparameters, which are determined by
 experiment. The optimal value of $\lambda$ and $k$ depend on the image. For
