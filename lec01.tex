@@ -103,13 +103,16 @@ Shreyas Katdare, Brian Mackwan}
 
 In this lecture, we discuss some basic optimization problems.
 
-\begin{tabular}{l | l | l | l}
-    & Variable & Solution space & Solution complexity \\
-    \hline
-    Continuous optimization & take any real value (continuous) & infinite &
-    polynomial in the size of the problem \\
-    Discrete optimization & discrete & finite & exponential (e.g., knapsack)
-\end{tabular}
+% TODO: Remove hardcoded values
+\begin{center}
+    \begin{tabular}{p{40 mm} | p{30 mm} | p{13 mm} | p{44 mm}}
+        & Variable & Solution space & Solution complexity \\
+        \hline
+        Continuous optimization & take any real value (continuous) & infinite &
+        polynomial in the size of the problem \\
+        Discrete optimization & discrete & finite & exponential (e.g., knapsack)
+    \end{tabular}
+\end{center}
 
 \section{What is optimization?}
 An optimization problem involves finding the minimum value attained
@@ -133,10 +136,10 @@ Euclidean distances between the warehouse and the cities is minimized.
 
 Let the cities be located at $\mathbf{y}_1, \ldots, \mathbf{y}_m$ and the
 warehouse at $\mathbf{x}$. We want to find the following: \[
-    \min_{x \in \mathscr{C}} \sum_{i = 1}^{m} \|\mathbf{x} - \mathbf{y}_i\|_2,
+    \min_{\mathbf{x} \in \mathscr{C}} \sum_{i = 1}^{m} \|\mathbf{x} - \mathbf{y}_i\|_2,
 \] where $\mathscr{C}$ is the set of all points where we want our Warehouse to
 be, and $\| \cdot \|_2$ represents the $L^2$ norm, defined by \[
-   \|x\| := \sqrt{x_1^2 + x_2^2},
+   \|\mathbf{x}\| := \sqrt{x_1^2 + x_2^2},
 \] where $\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}$.
 
 % Insert figure
