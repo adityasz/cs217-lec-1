@@ -238,6 +238,26 @@ value of $x$.
         \caption{An example of curve-fitting.}
         \label{fig:curve-fitting}
     \end{subfigure}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw plot [smooth cycle] coordinates {
+                    (0, 0) (-0.96, 0.8) (-0.96, 1.6) (-0.8, 2.56)
+                    (0.16, 3.2) (1.84, 2.56) (2.16, 0.88) (1.2, 0.16)
+            };
+            % \node[circle, fill, inner sep = 0.005pt] at (2.73, 3.26) {$\mathbf{y}_1$};
+            % \draw (-2,1.5) node[anchor=south] {.};
+            \node at (0.8, 0.48) {\textbullet $\mathbf{y}_1$};
+            \node at (-0.16, 1.2) {\textbullet $\mathbf{y}_2$};
+            \node at (0, 2.16) {\textbullet $\mathbf{y}_3$};
+            \node at (1.6, 2) {\textbullet $\mathbf{y}_n$};
+            \node at (0.64, 1.36) {\textbullet $\mathbf{x}$};
+        \end{tikzpicture}
+        \caption{Map of a country with cities at $\mathbf{y}_1, \ldots,
+        \mathbf{y}_n$ and a warehouse at $\mathbf{x}.$}
+        \label{fig:warehouse}
+    \end{subfigure}
     \caption{Examples of optimization problems.}
     \label{fig:examples}
 \end{figure}
@@ -307,12 +327,12 @@ Consider a political scenario where a political party $P$ needs to invest money
 to win elections. There are 3 different demographic classes, class 1, class 2,
 and class 3, and four issues to be addressed: A, B, C, and D. There is a
 specific pattern in which people from different classes respond to different
-issues. Table \ref{tab:election_grid} contains the number of votes gained or
+issues. Table \ref{tab:election} contains the number of votes gained or
 lost by the political party in each class per unit money spent on an issue, the
 population of each class, and the majority required by the party to win in each
 class.
 
-\begin{table}[htbp]
+\begin{table}[h]
     \centering
     \begin{tabular}{|c|c|c|c|}
         \hline
@@ -333,8 +353,8 @@ class.
         Majority   &  $50\,000$ & $100\,000$ & $25\,000$\\
         \hline
     \end{tabular}
-    \label{tab:election_grid}
     \caption{} % TODO: add some caption
+    \label{tab:election}
 \end{table}
 
 The aim of the political party is to minimize the total amount of money it needs
@@ -389,7 +409,7 @@ is accompanied by a corresponding dual problem:
 \begin{center}
     \begin{minipage}[t]{0.35\textwidth}
         \centering
-        \textbf{Primal Problem (P1)}
+        \textbf{Primal Problem}
         \vspace{-0.5cm}
         \begin{align*}
             \intertext{
@@ -403,7 +423,7 @@ is accompanied by a corresponding dual problem:
     \end{minipage}%
     \begin{minipage}[t]{0.35\textwidth}
         \centering
-        \textbf{Dual Problem (P2)}
+        \textbf{Dual Problem}
         \vspace{-0.5cm}
         \begin{align*}
             \intertext{
