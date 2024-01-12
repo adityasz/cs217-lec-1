@@ -141,14 +141,14 @@ Broadly, optimization problems can be classified into two classes:
 The knapsack problem is a classic discrete optimization problem, where we are
 given a bunch of objects with specific weights and a knapsack (backpack, for
 instance), which can carry at most some amount of weight. We want to fill our
-knapsack such that we have the highest permissible weight. There is nothing like
-partial association of an item with the knapsack: An item is either in the
-knapsack or not.
+knapsack up to the highest permissible weight. There is nothing like partial
+association of an item with the knapsack: An item is either in the knapsack or
+not.
 
 A polynomial solution to the most general knapsack problem is not known. We only
 have the brute force way of trying all possible combinations and finding the
-optimal one from that. In case of continuous optimization problems, even though
-the solution space is infinite, it is not very difficult to find the optimal
+optimal one from that. In continuous optimization problems, even though the
+solution space is infinite, it is not very difficult to find the optimal
 solution. We will be talking about continuous optimization problems.
 
 There is a significant trend in AI of formulating problems in terms of
@@ -221,29 +221,39 @@ problem in computer vision. We want to de-blur a blurred image according to some
 policy.
 
 We consider grayscale images of size $m \times n$, where each pixel has an
-intensity value in $[0, 1]$: 0 meaning black, and 1 meaning white.
-Let $\mathbf{y} = [y_{i, j}]^{m \times n}$ be the blurred image that we are
-given. Let $\mathbf{x}$ be the original image.
-\[
+intensity value in $[0, 1]$: 0 meaning black, and 1 meaning white.  Let
+$\mathbf{y} = [y_{i, j}]^{m \times n}$ be the blurred image that we are given.
+Let $\mathbf{x} = [x_{i, j}]^{m \times n}$ be the original image and
+$\mathbf{k}$ be the blurring filter which was applied to get $\mathbf{y}$.
+Then, to get the original (de-blurred) image, we have to solve \[
     \min_{\mathbf{x} \in [0, 1]^{m \times n}}
     \left(
         \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
-            \|y_{i, j} - (k * \mathbf{x})_{i, j}\|
+            |y_{i, j} - (\mathbf{k} * \mathbf{x})_{i, j}|
         + \lambda \sum_{i = 0}^{m - 1} \sum_{j = 0}^{n - 1}
-            ((\mathbf{x}_{i, j} - \mathbf{x}_{i, j + 1})^2
-             + (\mathbf{x}_{i + 1, j} - \mathbf{x}_{i, j})^2)
-    \right)
-\] Here, $\lambda$ and $k$ are the hyperparameters, which are determined by
-experiment.
+            \underbrace{
+                \left((x_{i, j} - x_{i, j + 1})^2
+                      + (x_{i + 1, j} - x_{i, j})^2\right)
+            }_{
+                \text{to reduce sudden intensity changes}
+            }
+    \right).
+\] $\lambda$ and $\mathbf{k}$ are the hyperparameters. $\lambda$ penalizes a
+high difference in intensity of adjacent pixels.
 
-\textbf{Example} (Machine learning). We have inputs $(x_i, y_i),$ where $i \in
-[n].$ We want to find \[
-    \min_{\Theta \in \R^3} \sum_{i = 1}^{n} \ell(h_\theta(x_i), y_i),
-\] where $\ell(\cdot, \cdot)$ is a loss function, $h_\Theta(x) = w_0 + w_1 x +
-w_2 x^2$ is the hypothesis (so $h_\theta(x_i)$ is the hypothesized point), and
-$\Theta = (w_0, w_1, w_2)$. An example of a loss function is \[
-    \ell(y_1, y_2) = (y_1 - y_2)^2.
-\] 
+\textbf{Example} (Machine learning)\textbf{.} Suppose we have inputs
+$(x_i, y_i)$ for $i \in [n].$ We are trying to fit a curve through these points.
+Suppose that we hypothesize the curve to be a polynomial
+$h_{\boldsymbol{\theta}}(x) = w_0 + w_1x + w_2x^2$, where
+$\boldsymbol\theta = (w_0, w_1, w_2)$ is a vector of the parameters. For each
+point $x_i$, we want the hypothesized point $h_{\boldsymbol{\theta}}(x_i)$ to be
+close to $y_i$. Let $\ell(x, y) = (x - y)^2$ be a (very simple) loss function.
+Our objective is to minimize the sum of the loss over all the observed points.
+
+The optimization problem is \[
+    \min_{\boldsymbol{\theta} \in \R^3}
+        \sum_{i = 1}^{n} \ell(h_{\boldsymbol{\theta}}(x_i), y_i).
+\]
 % Insert figure
 
 \subsection{Linear Programming: An optimization type}
