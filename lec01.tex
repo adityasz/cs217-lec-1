@@ -17,7 +17,8 @@
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{mathrsfs}   % provides \mathscr
-\usepackage{physics}    % provides \norm
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{tikz}
     \usetikzlibrary{arrows.meta}
 \usepackage{pgfplots}
@@ -108,8 +109,8 @@
 
 \begin{document}
 
-\lecture{1}{The Basics of Optimization}{Swaprava Nath}{Aditya Singh, Dion Reji,
-Shreyas Katdare, Brian Mackwan}
+\lecture{1}{The Basics of Optimization}{Swaprava Nath}%
+{Aditya Singh, Dion Reji, Shreyas Katdare, Brian Mackwan}
 
 In this lecture, we discuss what essentially optimization is, where we use
 optimization, and look at a very basic optimization technique called linear
@@ -173,31 +174,72 @@ value of $x$.
 
 \begin{figure}[t]
     \centering
-    \begin{tikzpicture}[scale=1, >=latex]
-        \begin{axis} [
-                axis x line = bottom,
-                axis y line = none,
-                xlabel = $x$,
-                xmin   = -5,
-                xmax   = 9,
-                ymin   = 0,
-                ymax   = 64,
-                xtick  = {0, 1, 4, ..., 7},
-                ytick  = {},
-                width  = 60 mm,
-                height = 40 mm,
-                axis line style = {<->, >={Triangle[length=2mm, width=1.5mm]}}
-            ]
-            \addplot [line width = 1 pt]
-                expression[
-                    smooth,
-                    samples = 2000,
-                    domain  = -5:9
-                ] {(x - 2) * (x - 2)};
-        \end{axis}
-    \end{tikzpicture}
-    \caption{A plot of $f(x) = (x - 2)^2.$}
-    \label{fig:ex1}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1, >=latex]
+            \begin{axis} [
+                    axis x line = bottom,
+                    axis y line = none,
+                    xlabel = $x$,
+                    xmin   = -5,
+                    xmax   = 9,
+                    ymin   = 0,
+                    ymax   = 64,
+                    xtick  = {0, 1, 4, ..., 7},
+                    width  = 60 mm,
+                    height = 40 mm,
+                    axis line style = {<->, >={Triangle[length=2mm, width=1.5mm]}}
+                ]
+                \addplot [line width = 1 pt]
+                    expression[
+                        smooth,
+                        samples = 2000,
+                        domain  = -5:9
+                    ] {(x - 2) * (x - 2)};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{A plot of $f(x) = (x - 2)^2.$}
+        \label{fig:ex1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1, >=latex]
+            \begin{axis} [
+                    axis x line = bottom,
+                    axis y line = left,
+                    xlabel = $x$,
+                    ylabel = $y$,
+                    xmin   = 0,
+                    xmax   = 3,
+                    ymin   = 0,
+                    ymax   = 4,
+                    ticks  = none,
+                    width  = 60 mm,
+                    height = 40 mm,
+                    axis line style = {->, >={Triangle[length=2mm, width=1.5mm]}}
+                ]
+                \addplot [line width = 1 pt]
+                    expression[
+                        smooth,
+                        samples = 2000,
+                        domain  = 0:5
+                    ] {2 - 2 * (x - 1)^2 + 1.4 * (x - 1)^3};
+                % TODO: A better way is to generate points from a function of
+                % sines and cosines, and then code up, say, gradient based
+                % optimization of the polynomial coefficients.
+                \node[circle, fill, inner sep = 1pt] at (axis cs: 0.47, 1.31) {};
+                \node[circle, fill, inner sep = 1pt] at (axis cs: 0.82, 2.05) {};
+                \node[circle, fill, inner sep = 1pt] at (axis cs: 1.24, 1.90) {};
+                \node[circle, fill, inner sep = 1pt] at (axis cs: 1.83, 1.30) {};
+                \node[circle, fill, inner sep = 1pt] at (axis cs: 2.33, 1.75) {};
+                \node[circle, fill, inner sep = 1pt] at (axis cs: 2.73, 3.26) {};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{An example of curve-fitting.}
+        \label{fig:curve-fitting}
+    \end{subfigure}
+    \caption{Examples of optimization problems.}
+    \label{fig:examples}
 \end{figure}
 
 \textbf{Example} (Geometry)\textbf{.} Suppose we have a map of a country with
@@ -254,7 +296,6 @@ The optimization problem is \[
     \min_{\boldsymbol{\theta} \in \R^3}
         \sum_{i = 1}^{n} \ell(h_{\boldsymbol{\theta}}(x_i), y_i).
 \]
-% Insert figure
 
 \subsection{Linear Programming: An optimization type}
 A linear program is a simple optimization type where the objective function and
@@ -325,46 +366,56 @@ $x_1 + x_2 + x_3 + x_4 = x_1 + x_2 + 140 x_3/222 + x_4 \geq 3\,100\,000/111,$
 this proves that our given solution is truly the optimal solution.
 
 \subsection{Standard Form of Linear Program}
-Let $\mathbf{x}$ be the vector containing the variables to optimize and $\mathbf{c}$
-be the vector of constants: \[
-    \mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix},
+Let $\mathbf{x} \in \R^n$ be the vector containing the variables to optimize and
+$\mathbf{c} \in \R^n$ be the vector of constants: \[
+    \mathbf{x} = \begin{pmatrix} x_1 \\ \vdots \\ x_n \end{pmatrix},
     \quad
-    \mathbf{c} = \begin{bmatrix} c_1 \\ c_2 \\ \vdots \\ c_n \end{bmatrix}.
+    \mathbf{c} = \begin{pmatrix} c_1 \\ \vdots \\ c_n \end{pmatrix}.
 \] Then, we can write the standard form of linear program as
-$\max \mathbf{c}^\top \mathbf{x}$ subject to the constraints \[
+$\max_{\mathbf{x}} \mathbf{c}^\top \mathbf{x}$ subject to the constraints \[
     \mathbf{A}_{m \times n} \mathbf{x}_{n \times 1}
         \leq \mathbf{b}_{m \times 1}
-        = \begin{bmatrix} b_1 \\ b_2 \\ \vdots \\ b_m \end{bmatrix},
-\]
-where $\mathbf{x} \geq \mathbf{0}.$ $\geq$ represents element-wise greater than or
-equal to: \[
-    \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}
-        \geq \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \end{bmatrix}
+        = \begin{pmatrix} b_1 \\ \vdots \\ b_m \end{pmatrix}
+        \quad \text{and} \quad \mathbf{x} \ge \mathbf{0},
+\] where $\geq$ represents element-wise greater than or equal to: \[
+    \begin{pmatrix} x_1 \\ \vdots \\ x_n \end{pmatrix}
+        \geq \begin{pmatrix} 0 \\ \vdots \\ 0 \end{pmatrix}
     \iff \forall i,\ x_i \geq 0.
 \]
 
-The aforementioned problem is commonly referred to as the primal problem, and it
-is accompanied by a corresponding dual problem.\\
-
-\begin{minipage}[t]{0.45\textwidth}
-  \centering
-  \textbf{Primal Problem (P1)}
-  \begin{align*}
-    \text{maximize} \quad & \mathbf{c}^\top \mathbf{x} \\
-    \text{subject to} \quad & \mathbf{Ax} \leq \mathbf{b} \\
-    & \mathbf{x} \geq \mathbf{0}
-  \end{align*}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.45\textwidth}
-  \centering
-  \textbf{Dual Problem (P2)}
-  \begin{align*}
-    \text{minimize} \quad & \mathbf{b}^\top \mathbf{y} \\
-    \text{subject to} \quad & \mathbf{A}^\top \mathbf{y} \geq \mathbf{c} \\
-    & \mathbf{y} \geq \mathbf{0}
-  \end{align*}
-\end{minipage}
+The aforementioned problem is commonly referred to as the primal problem and it
+is accompanied by a corresponding dual problem:
+% TODO: Remove 0.35\textwidth and -0.5cm hardcoded values
+\begin{center}
+    \begin{minipage}[t]{0.35\textwidth}
+        \centering
+        \textbf{Primal Problem (P1)}
+        \vspace{-0.5cm}
+        \begin{align*}
+            \intertext{
+                $\displaystyle \max_{\mathbf{x}}
+                    \mathbf{c}^\top \mathbf{x}$
+                \vspace{-0.5cm}
+            }
+            \text{s.t.}\ \mathbf{Ax} &\leq \mathbf{b}, \\
+                               \mathbf{x} &\geq \mathbf{0}.
+        \end{align*}
+    \end{minipage}%
+    \begin{minipage}[t]{0.35\textwidth}
+        \centering
+        \textbf{Dual Problem (P2)}
+        \vspace{-0.5cm}
+        \begin{align*}
+            \intertext{
+                $\displaystyle \min_{\mathbf{y}}
+                    \mathbf{b}^\top \mathbf{y}$
+                \vspace{-0.5cm}
+            }
+            \text{s.t.}\ \mathbf{A}^\top \mathbf{y} &\geq \mathbf{c}, \\
+                                              \mathbf{y} &\geq \mathbf{0}.
+        \end{align*}
+    \end{minipage}
+\end{center}
 
 \subsection{Weak Duality Principle}
 
@@ -376,20 +427,25 @@ is accompanied by a corresponding dual problem.\\
     \]
 \end{theorem}
 \begin{proof}
-    \begin{align}
-        \mathbf{Ax} &\leq \mathbf{b} \\
+    Since $\mathbf{x}$ is a feasible solution of the primal problem,
+    \begin{align*}
+        \mathbf{Ax} &\leq \mathbf{b}, \\
+        \intertext{
+            and hence
+        }
         \mathbf{x}^\top \mathbf{A}^\top &\leq \mathbf{b}^\top \\
         \intertext{
-            As $\mathbf{y} \geq \mathbf{0}$, multiplying it on both sides will not
-            change the inequality:
+            Since $\mathbf{y} \geq \mathbf{0}$, multiplying it on both sides
+            will not change the inequality:
         }
         \mathbf{x}^\top \mathbf{A}^\top \mathbf{y}
-                                        &\leq \mathbf{b}^\top \mathbf{y} \\
+            &\leq \mathbf{b}^\top \mathbf{y}. \\
         \intertext{
-            Since $\mathbf{A}^\top \mathbf{y} \geq \mathbf{c},$
+            Since $\mathbf{y}$ is a feasible solution of the dual problem,
+            $\mathbf{A}^\top \mathbf{y} \geq \mathbf{c},$ and hence
         }
         \mathbf{b}^\top \mathbf{y} &\geq \mathbf{x}^\top \mathbf{c},
-    \end{align}
+    \end{align*}
     which can also be written as $\mathbf{b}^\top \mathbf{y} \geq
     \mathbf{c}^\top \mathbf{x}$.
     Thus, weak duality principle provides a relation between the
