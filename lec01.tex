@@ -49,12 +49,12 @@
         \framebox{
             \vbox{
                 \vspace{2mm}
-                \hbox to 6.28in {{\bf CS 217: Artificial Intelligence and
+                \hbox to 6.28in {\textbf{CS 217: Artificial Intelligence and
                                   Machine Learning \hfill Jan 10, 2024}}
                 \vspace{4mm}
                 \hbox to 6.28in {{\Large \hfill Lecture #1: #2  \hfill}}
                 \vspace{2mm}
-                \hbox to 6.28in {{\it Lecturer: #3 \hfill Scribes: #4}}
+                \hbox to 6.28in {\textit{Lecturer: #3 \hfill Scribes: #4}}
                 \vspace{2mm}
             }
         }
@@ -102,32 +102,66 @@
 \newtheorem{claim}[theorem]{Claim}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}[theorem]{Definition}
-\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
+\newenvironment{proof}{{\textit{Proof.}}}{\hfill\rule{2mm}{2mm}}
+
+\newcommand\R{\mathbb{R}}
 
 \begin{document}
 
 \lecture{1}{The Basics of Optimization}{Swaprava Nath}{Aditya Singh, Dion Reji,
 Shreyas Katdare, Brian Mackwan}
 
-In this lecture, we discuss some basic optimization problems.
+In this lecture, we discuss what essentially optimization is, where we use
+optimization, and look at a very basic optimization technique called linear
+programming.
+
+Broadly, optimization problems can be classified into two classes:
 
 % TODO: Remove hardcoded values
-\begin{center}
-    \begin{tabular}{p{40 mm} | p{30 mm} | p{13 mm} | p{44 mm}}
-        & Variable & Solution space & Solution complexity \\
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l | c | p{13 mm} | p{35 mm}}
+        % \hline
+        \textbf{Class}          & \textbf{Variable}
+                                & \textbf{Solution space}
+                                & \textbf{Solution complexity} \\
         \hline
-        Continuous optimization & take any real value (continuous) & infinite &
-        polynomial in the size of the problem \\
-        Discrete optimization & discrete & finite & exponential (e.g., knapsack)
+        Continuous optimization & continuous
+                                & infinite
+                                & polynomial in the size of the problem \\
+        \hline
+        Discrete optimization   & discrete
+                                & finite
+                                & exponential in the size of the problem \\
+        % \hline
     \end{tabular}
-\end{center}
+    \label{Classes of optimization problems.}
+\end{table}
+
+The knapsack problem is a classic discrete optimization problem, where we are
+given a bunch of objects with specific weights and a knapsack (backpack, for
+instance), which can carry at most some amount of weight. We want to fill our
+knapsack such that we have the highest permissible weight. There is nothing like
+partial association of an item with the knapsack: An item is either in the
+knapsack or not.
+
+A polynomial solution to the most general knapsack problem is not known. We only
+have the brute force way of trying all possible combinations and finding the
+optimal one from that. In case of continuous optimization problems, even though
+the solution space is infinite, it is not very difficult to find the optimal
+solution. We will be talking about continuous optimization problems.
+
+There is a significant trend in AI of formulating problems in terms of
+optimization problems.
 
 \section{What is optimization?}
-An optimization problem involves finding the minimum value attained
-by a function subject to some constraints, i.e., \[
-    \min_{x \in \mathscr{C}} f(x),
-\] where $f(x)$ is the objective function and $\mathscr{C}$ is the
-constraint set.
+There are two components of an optimization problem: The objective function
+which we want to minimize (or maximize, which is just the negative of the
+minimization problem), and the constraint set. Let $f(x)$ be the objective
+function, and $\mathscr{C}$ be the constraint set.  Then, the optimization
+problem is written as \[
+    \min_{x \in \mathscr{C}} f(x).
+\]
 
 \textbf{Example.} Minimize $(x - 2)^2$ with the constraint that
 $x \in [0, 1] \cup [4, 7].$
@@ -137,7 +171,7 @@ $\mathscr{C} = [0, 1] \cup [4, 7].$ This is a one-variable function, and we can
 easily see from the plot in figure \ref{fig:ex1} that $x^* = 1$ is the optimal
 value of $x$.
 
-\begin{figure}[b]
+\begin{figure}[t]
     \centering
     \begin{tikzpicture}[scale=1, >=latex]
         \begin{axis} [
@@ -166,24 +200,30 @@ value of $x$.
     \label{fig:ex1}
 \end{figure}
 
-\textbf{Example.} We want to optimally place a warehouse, so that the sum of the
-Euclidean distances between the warehouse and the cities is minimized.
+\textbf{Example} (Geometry)\textbf{.} Suppose we have a map of a country with
+cities represented by the points $\mathbf{y}_1, \ldots, \mathbf{y}_n$ in
+two-dimensions. We want to set up a supply chain and deliver to all these
+cities. We want to build a warehouse such that the sum of the distances from it
+to all the cities is minimized (assuming we can transport the Euclidean way).
 
-Let the cities be located at $\mathbf{y}_1, \ldots, \mathbf{y}_m$ and the
-warehouse at $\mathbf{x}$. We want to find the following: \[
+Let the warehouse be located at $\mathbf{x}.$ Then, the optimization problem is
+\[
     \min_{\mathbf{x} \in \mathscr{C}}
-    \sum_{i = 1}^{m} \|\mathbf{x} - \mathbf{y}_i\|_2,
-\] where $\mathscr{C}$ is the set of all points where we want our warehouse to
-be, and $\| \cdot \|_2$ represents the $L^2$ norm, defined by \[
-   \|\mathbf{x}\| := \sqrt{x_1^2 + x_2^2},
-\] where $\mathbf{x} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}$.
+        \sum_{i = 1}^{m} \|\mathbf{x} - \mathbf{y}_i\|_2,
+\] where $\mathscr{C}$ is the set of all points in the country, and
+$\| \mathbf{x} \|_2 = \sqrt{x_1^2 + x_2^2}$ represents the $L^2$ norm of
+$\mathbf{x} = (x_1, x_2).$
 
 % Insert figure
 
-\textbf{Example} (Image de-blurring). We consider grayscale images of size $m
-\times n$, where each pixel has an intensity value in $[0, 1].$ The input image
-is $\mathbf{y} = [y_{i, j}]^{m \times n}$ and the desired output is
-$\mathbf{x}.$
+\textbf{Example} (Computer vision)\textbf{.} Image de-blurring is a common
+problem in computer vision. We want to de-blur a blurred image according to some
+policy.
+
+We consider grayscale images of size $m \times n$, where each pixel has an
+intensity value in $[0, 1]$: 0 meaning black, and 1 meaning white.
+Let $\mathbf{y} = [y_{i, j}]^{m \times n}$ be the blurred image that we are
+given. Let $\mathbf{x}$ be the original image.
 \[
     \min_{\mathbf{x} \in [0, 1]^{m \times n}}
     \left(
@@ -194,15 +234,11 @@ $\mathbf{x}.$
              + (\mathbf{x}_{i + 1, j} - \mathbf{x}_{i, j})^2)
     \right)
 \] Here, $\lambda$ and $k$ are the hyperparameters, which are determined by
-experiment. The optimal value of $\lambda$ and $k$ depend on the image. For
-example, medical images may require different $\lambda$ and $k$ as compared to
-images of trees.
+experiment.
 
-% Insert figure
-
-\textbf{Example} (Machine learning; curve-fitting). We have inputs $(x_i, y_i),$
-where $i \in [n].$ We want to find \[
-    \min_\Theta \sum_{i = 1}^{n} \ell(h_\theta(x_i), y_i),
+\textbf{Example} (Machine learning). We have inputs $(x_i, y_i),$ where $i \in
+[n].$ We want to find \[
+    \min_{\Theta \in \R^3} \sum_{i = 1}^{n} \ell(h_\theta(x_i), y_i),
 \] where $\ell(\cdot, \cdot)$ is a loss function, $h_\Theta(x) = w_0 + w_1 x +
 w_2 x^2$ is the hypothesis (so $h_\theta(x_i)$ is the hypothesized point), and
 $\Theta = (w_0, w_1, w_2)$. An example of a loss function is \[
